@@ -1,0 +1,26 @@
+{
+  "name": "vue-composition-basic",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.2.96",
+    "@vuelidate/core": "^2.0.2",
+    "@vuelidate/validators": "^2.0.2",
+    "bootstrap": "^5.3.0",
+    "bootstrap-vue": "^2.23.1",
+    "pinia": "^2.0.0-rc.10",
+    "vue": "^3.3.4",
+    "vue-router": "^4.0.13",
+    "vuelidate": "^0.7.7",
+    "vuetify": "^3.3.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "vite": "^4.3.9"
+  }
+}
