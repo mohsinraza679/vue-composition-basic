@@ -16,7 +16,7 @@
           <v-card-text>
             <v-container>
               <v-row>
-                <v-col cols="12" sm="6" md="4">
+                <v-col cols="12" sm="12" md="6">
                   <v-text-field
                     v-model="product_title"
                     :rules="titleRules"
@@ -24,7 +24,7 @@
                     required
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="6" md="4">
+                <v-col cols="12" sm="12" md="6">
                   <v-text-field
                     v-model="product_name"
                     label="Product Name"
@@ -33,7 +33,7 @@
                     :rules="nameRules"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="6" md="4">
+                <v-col cols="12" >
                   <v-select
                     v-model="product_availability"
                     :items="states"

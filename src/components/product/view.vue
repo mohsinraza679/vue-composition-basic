@@ -73,17 +73,17 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12" sm="6" md="4">
+              <v-col cols="12"  sm="12" md="6">
                 <v-text-field v-model="product_title" label="title*" required></v-text-field>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
+              <v-col cols="12"  sm="12" md="6">
                 <v-text-field
                   v-model="product_name"
                   label="Product Name"
                   hint=""
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
+              <v-col cols="12" >
                 <v-select
                     v-model="product_availability"
                     :items="states"
@@ -122,7 +122,7 @@
   <script>
 import { useUserStore } from "../../stores/user";
 import { productStore } from "../../stores/product";
-import { ref, computed } from "vue";
+import { ref, computed, reactive } from "vue";
 
 export default {
   data: () => ({
@@ -140,6 +140,16 @@ export default {
   setup() {
     const userStore = useUserStore();
     const productStr = productStore();
+    const data = reactive({
+      states: [
+        '12:00AM', '01:00AM', '02:00AM', '03:00AM',
+        '04:00AM', '05:00AM', '06:00AM', '07:00AM', 
+        '08:00AM', '09:00AM', '10:00AM', '11:00AM', 
+        '12:00PM', '01:00PM', '02:00PM', '03:00PM',
+        '04:00PM', '05:00PM', '06:00PM', '07:00PM', 
+        '08:00PM', '09:00PM', '10:00PM', '11:00PM', 
+      ],
+    });
     const dialog = ref(false)
     const product_title = ref('')
     const product_name = ref('')
@@ -184,7 +194,8 @@ export default {
       product_description,
       product_id,
       updateProdcut,
-      productImage
+      productImage,
+      ...data,
     };
   },
 };
