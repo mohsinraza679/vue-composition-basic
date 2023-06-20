@@ -5,20 +5,20 @@ const user = JSON.parse(localStorage.getItem('user'));
 export const productStore = defineStore('product', {
   state: () => ({
     products:[],
+    filterActive:true,
+    productDetail:null,
   }),
   actions: {
-   
+    ActiveSearch(){
+      this.filterActive = !this.filterActive
+    },
     saveProduct(productData) {
       const existingProducts = localStorage.getItem('products');
       let products = [];
       if (existingProducts) {
         products = JSON.parse(existingProducts);
       }
-      
-      // Generate a unique ID for the product
       const productId = products.length + 1;
-    
-      // Create a new object with the ID and data
       const newProduct = {
         id: productId,
         ...productData
@@ -55,6 +55,7 @@ export const productStore = defineStore('product', {
 
         const userProducts = products.filter(product => product.user_id === user_id);
         this.products = userProducts;
+        router.push("/dashboard");
       }
     },
     updateProdcut(updateProdcut){
@@ -66,8 +67,18 @@ export const productStore = defineStore('product', {
         localStorage.setItem('products', JSON.stringify(existingProducts));
         const userProducts = existingProducts.filter(product => product.user_id === updateProdcut.user_id);
         this.products = userProducts;
+        this.productDetail = updateProdcut
       }else{
         console.log('fail');
+      }
+    },
+    getProductDetail(id){
+      const products = JSON.parse(localStorage.getItem('products')) || [];
+      const productDetail  = products.find((product)=> product.id == id);
+      if (productDetail) {
+        this.productDetail = productDetail;
+      } else {
+        console.log(`Product with ID ${id} not found.`, );
       }
     }
   },

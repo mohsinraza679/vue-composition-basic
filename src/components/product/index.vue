@@ -1,8 +1,8 @@
 <template>
   <div>
-    <br />
-    <div class="text-end pa-5">
-      <v-btn @click="openDialog" variant="outlined">add Product</v-btn>
+    
+    <div class="text-end ">
+      <v-btn class="my-2" @click="openDialog" variant="outlined">add Product</v-btn>
     </div>
   </div>
   <Productdetail />
@@ -33,7 +33,7 @@
                     :rules="nameRules"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" >
+                <v-col cols="12">
                   <v-select
                     v-model="product_availability"
                     :items="states"
@@ -43,6 +43,7 @@
                     small-chips
                     outlined
                     dense
+                    :rules="availabilityRules"
                   ></v-select>
                 </v-col>
                 <v-col cols="12">
@@ -77,7 +78,7 @@
     <script>
 import { useUserStore } from "../../stores/user";
 import { productStore } from "../../stores/product";
-import { ref, computed , reactive} from "vue";
+import { ref, computed, reactive } from "vue";
 import router from "../../router";
 import Productdetail from "./view.vue";
 import addProduct from "./add.vue";
@@ -89,20 +90,38 @@ export default {
     const productStr = productStore();
     const data = reactive({
       states: [
-        '12:00AM', '01:00AM', '02:00AM', '03:00AM',
-        '04:00AM', '05:00AM', '06:00AM', '07:00AM', 
-        '08:00AM', '09:00AM', '10:00AM', '11:00AM', 
-        '12:00PM', '01:00PM', '02:00PM', '03:00PM',
-        '04:00PM', '05:00PM', '06:00PM', '07:00PM', 
-        '08:00PM', '09:00PM', '10:00PM', '11:00PM', 
+        "12:00AM",
+        "01:00AM",
+        "02:00AM",
+        "03:00AM",
+        "04:00AM",
+        "05:00AM",
+        "06:00AM",
+        "07:00AM",
+        "08:00AM",
+        "09:00AM",
+        "10:00AM",
+        "11:00AM",
+        "12:00PM",
+        "01:00PM",
+        "02:00PM",
+        "03:00PM",
+        "04:00PM",
+        "05:00PM",
+        "06:00PM",
+        "07:00PM",
+        "08:00PM",
+        "09:00PM",
+        "10:00PM",
+        "11:00PM",
       ],
     });
 
     const dialog = ref(false);
     const product_title = ref("");
     const product_name = ref("");
-    const product_availability = ref([]);
-   
+    const product_availability = ref(null);
+
     const product_description = ref("");
     const valid = ref(true);
     const saveProduct = () => {
@@ -116,18 +135,17 @@ export default {
       if (
         product_title.value &&
         product_name.value &&
-        product_availability.value &&
+        product_availability.value.length > 0 &&
         product_description.value
       ) {
         productStr.saveProduct(prodcutData);
         dialog.value = false;
         product_title.value = "";
         product_name.value = "";
-        product_availability.value = "";
+        product_availability.value = null;
         product_description.value = "";
       } else {
-        validate()
-        
+        validate();
       }
     };
     const user = computed(() => userStore.user);
@@ -140,9 +158,10 @@ export default {
     const descriptionRules = computed(() => [
       (v) => !!v || "Description is required",
     ]);
+
     const form = ref(null);
     const validate = () => {
-      form.value.validate()
+      form.value.validate();
     };
 
     const openDialog = () => {
@@ -164,6 +183,7 @@ export default {
       descriptionRules,
       valid,
       validate,
+
       form,
       ...data,
     };

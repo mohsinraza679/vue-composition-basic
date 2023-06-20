@@ -1,96 +1,63 @@
 <template>
-  <v-row>
-    <v-col cols="12" sm="12" md="6">
-      <v-text-field
-        v-if="filterActive"
-        class="mx-5"
-        v-model="searchTerm"
-        label="Search"
-        required
-      ></v-text-field>
-    </v-col>
-    <v-col>
-      
-    </v-col>
-  </v-row>
+  <v-card class="mx-auto my-2">
+    <v-img cover height="400" :src="productImages"></v-img>
 
-  <div class="d-flex align-content-start flex-wrap">
-    <v-card
-      v-for="(product, index) in filteredProducts"
-      :key="index"
-      :loading="loading"
-      class="mx-3 mt-3 mb-3"
-      max-width="355"
-    >
-      <template v-slot:loader="{ isActive }">
-        <v-progress-linear
-          :active="isActive"
-          color="deep-purple"
-          height="4"
-          indeterminate
-        ></v-progress-linear>
-      </template>
-      <img cover height="250" src="@/assets/img/products/product.jpg" />
+    <!-- <img cover  src="@/assets/img/products/product.jpg" /> -->
 
-      <v-card-item>
-        <v-card-title>{{ product.product_title }}</v-card-title>
-      </v-card-item>
+    <v-card-item>
+<v-card-title>  {{ productdata.product_title }}</v-card-title>
+    </v-card-item>
 
-      <v-card-text>
-        <v-row align="center" class="mx-0">
-          <v-rating
-            :model-value="4.5"
-            color="amber"
-            density="compact"
-            half-increments
-            readonly
-            size="small"
-          ></v-rating>
+    <v-card-text>
+      <v-row align="center" class="mx-0">
+        <v-rating
+          :model-value="4.5"
+          color="amber"
+          density="compact"
+          half-increments
+          readonly
+          size="small"
+        ></v-rating>
 
-          <div class="text-grey ms-4">4.5 (413)</div>
-        </v-row>
-        <div class="d-flex justify-space-between">
-          <div class="my-4 text-subtitle-1"> {{ product.product_name }}</div>
-          <!-- <div class="my-4 " ></div> -->
-          <v-btn :to="`/view-detail/${product.id}`" class="my-4 text-capitalize " color="primary"   variant="tonal"   >
-            View Detail
-            </v-btn>
-        </div>
+        <div class="text-grey ms-4">4.5 (413)</div>
+      </v-row>
 
-        <div class="product_description">
-          {{ product.product_description }}
-        </div>
-      </v-card-text>
+      <div class="my-4 text-subtitle-1">{{ productdata.product_name }}</div>
 
-      <v-divider class="mx-4 mb-1"></v-divider>
+      <div>
+       {{ productdata.product_description }}
+      </div>
+    </v-card-text>
 
-      <v-card-title>Availability</v-card-title>
+    <v-divider class="mx-4 mb-1"></v-divider>
 
-      <div class="px-4 selection-main">
-        <v-chip-group >
-          <v-chip
-            v-for="(product, index) in product.product_availability"
+    <v-card-title>Availability</v-card-title>
+
+    <div class="px-4">
+      <v-chip-group>
+        <v-chip
+            v-for="(product, index) in productdata.product_availability"
             :key="index"
             >{{ product }}</v-chip
           >
-        </v-chip-group>
-      </div>
-      <br /><br />
-      <br />
+      </v-chip-group>
+    </div>
+
+    <v-card-actions>
       <div class="action-main">
         <div class="action-main-btn">
-          <v-btn small color="primary" @click="editItem(product)">
+          <v-btn small color="primary" @click="editItem(productdata)">
             <v-icon left>mdi-pencil</v-icon>
             <!-- Edit -->
           </v-btn>
-          <v-btn small color="error" @click="deleteItem(product)">
+          <v-btn small color="error" @click="deleteItem(productdata)">
             <v-icon left>mdi-delete</v-icon>
             <!-- Delete -->
           </v-btn>
         </div>
       </div>
-    </v-card>
-  </div>
+    </v-card-actions>
+  </v-card>
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent width="1024">
       <v-card>
@@ -155,12 +122,11 @@
       </v-card>
     </v-dialog>
   </v-row>
-
   <v-row justify="center">
     <v-dialog v-model="deleteDialog" persistent max-width="500"  >
       <v-card height="200" class="pa-5">
         <v-card-title class="text-h5">
-          Delete This {{ product.product_title }}?
+          Delete This {{ productdata.product_title }}?
         </v-card-title>
         <v-card-text>This is permanent and can't be undone</v-card-text>
         <v-card-actions>
@@ -177,7 +143,7 @@
             style="color: red;"
             color="  text-capitalize"
             text
-            @click="deleteItemProduct(product.id)"
+            @click="deleteItemProduct(productdata.id)"
           >
             Delete
           </v-btn>
@@ -187,27 +153,18 @@
   </v-row>
 </template>
   <script>
+import productImage from "@/assets/img/products/product.jpg";
+import { useRoute } from "vue-router";
 import { useUserStore } from "../../stores/user";
+import { computed, ref, watchEffect, reactive } from "vue";
 import { productStore } from "../../stores/product";
-import { ref, computed, reactive } from "vue";
-
 export default {
-  data: () => ({
-    loading: false,
-    
-  }),
-
-  methods: {
-    reserve() {
-      this.loading = true;
-
-      setTimeout(() => (this.loading = false), 2000);
-    },
-  },
   setup() {
+    const productImages = ref(productImage);
     const userStore = useUserStore();
     const productStr = productStore();
-
+    const route = useRoute();
+    const params = reactive(route.params);
     const data = reactive({
       states: [
         "12:00AM",
@@ -236,8 +193,13 @@ export default {
         "11:00PM",
       ],
     });
+    watchEffect(() => {
+        console.log(params.id);
+      productStr.getProductDetail(params.id);
+    });
+
+    const  productdata = computed(()=> productStr.productDetail)
     const dialog = ref(false);
-    const valid = ref(true);
     const deleteDialog = ref(false);
     const product_title = ref("");
     const product_name = ref("");
@@ -285,55 +247,15 @@ export default {
         validate();
       }
     };
-    const products = computed(() => productStr.products);
-    const filterActive = computed(() => productStr.filterActive);
-    const productImage = ref("");
-    const titleRules = computed(() => [(v) => !!v || "Title is required"]);
-    const nameRules = computed(() => [(v) => !!v || "Name is required"]);
-    const availabilityRules = computed(() => [
-      (v) => !!v || "Availability is required",
-    ]);
-    const descriptionRules = computed(() => [
-      (v) => !!v || "Description is required",
-    ]);
-
     const form = ref(null);
     const validate = () => {
       console.log("data", product_availability.value);
       form.value.validate();
     };
-    const searchTerm = ref("");
-    const filteredProducts = computed(() => {
-      if (
-        typeof searchTerm.value !== "string" ||
-        searchTerm.value.trim() === ""
-      ) {
-        return products.value;
-      }
-
-      const searchLower = searchTerm.value.toLowerCase().trim();
-
-      return products.value.filter((p) => {
-        const titleMatch = p.product_title.toLowerCase().includes(searchLower);
-        const nameMatch = p.product_name.toLowerCase().includes(searchLower);
-        const descriptionMatch = p.product_description
-          .toLowerCase()
-          .includes(searchLower);
-        return titleMatch || nameMatch || descriptionMatch;
-      });
-    });
     return {
-      filterActive,
-      searchTerm,
-      titleRules,
-      nameRules,
-      availabilityRules,
-      descriptionRules,
+      productImages,
+      productdata,
       dialog,
-      deleteDialog,
-      product,
-      products,
-      filteredProducts,
       deleteItem,
       deleteItemProduct,
       editItem,
@@ -345,56 +267,10 @@ export default {
       updateProdcut,
       productImage,
       form,
+      deleteDialog,
       validate,
       ...data,
     };
   },
 };
 </script>
-<style scoped>
-.selection-main {
-  height: 90px;
-  overflow: auto;
-}
-.selection-main::-webkit-scrollbar {
-  width: 4px;
-  border-radius: 50px;
-}
-
-.selection-main::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-}
-
-.selection-main::-webkit-scrollbar-thumb {
-  background-color: darkgrey;
-  outline: 1px solid slategrey;
-}
-.action-main {
-  position: relative;
-}
-.action-main-btn {
-  position: absolute;
-  bottom: 15px;
-  right: 5px;
-}
-.action-main-btn button {
-  margin: 0px 3px;
-}
-.product_description {
-  height: 80px;
-  overflow: auto;
-}
-.product_description::-webkit-scrollbar {
-  width: 4px;
-  border-radius: 50px;
-}
-
-.product_description::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-}
-
-.product_description::-webkit-scrollbar-thumb {
-  background-color: darkgrey;
-  outline: 1px solid slategrey;
-}
-</style>
