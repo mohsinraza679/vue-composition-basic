@@ -1,6 +1,10 @@
 <template>
-  <div  class="error-message mx-auto">
-    <v-alert type="error">
+  <div v-if="errorMessageAlert == true" class="error-message mx-auto">
+    <v-alert dense
+      outlined
+      type="error"
+      icon="mdi-alert-circle"
+      >
       {{ errorMessage }}
     </v-alert>
   </div>
@@ -11,18 +15,11 @@ import { defineProps, computed } from "vue";
 import { useUserStore } from "../stores/user";
 export default {
   name: "Error",
-  props: {
-    errorMessage: {
-      type: String,
-      required: true,
-    },
-  },
-  setup(props) {
+  setup() {
     const userStore = useUserStore();
     const errorMessage = computed(() => userStore.errorMessage);
     const errorMessageAlert = computed(() => userStore.errorMessageAlert);
     return {
-      errorMessage: props.errorMessage,
       errorMessage,
       errorMessageAlert,
     };

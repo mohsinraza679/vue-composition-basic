@@ -9,9 +9,7 @@
         required
       ></v-text-field>
     </v-col>
-    <v-col>
-      
-    </v-col>
+    <v-col> </v-col>
   </v-row>
 
   <div class="d-flex align-content-start flex-wrap">
@@ -30,8 +28,8 @@
           indeterminate
         ></v-progress-linear>
       </template>
-      <img cover height="250" src="@/assets/img/products/product.jpg" />
-
+      <!-- <img cover height="250" src="@/assets/img/products/product.jpg" /> -->
+      <v-img cover height="250" :src="productImages"></v-img>
       <v-card-item>
         <v-card-title>{{ product.product_title }}</v-card-title>
       </v-card-item>
@@ -47,14 +45,19 @@
             size="small"
           ></v-rating>
 
-          <div class="text-grey ms-4">4.5 (413)</div>
+          <div class="text-grey ms-4">4.5 ({{ doubleCount }})</div>
         </v-row>
         <div class="d-flex justify-space-between">
-          <div class="my-4 text-subtitle-1"> {{ product.product_name }}</div>
+          <div class="my-4 text-subtitle-1">{{ product.product_name }}</div>
           <!-- <div class="my-4 " ></div> -->
-          <v-btn :to="`/view-detail/${product.id}`" class="my-4 text-capitalize " color="primary"   variant="tonal"   >
+          <v-btn
+            :to="`/view-detail/${product.id}`"
+            class="my-4 text-capitalize"
+            color="primary"
+            variant="tonal"
+          >
             View Detail
-            </v-btn>
+          </v-btn>
         </div>
 
         <div class="product_description">
@@ -67,7 +70,7 @@
       <v-card-title>Availability</v-card-title>
 
       <div class="px-4 selection-main">
-        <v-chip-group >
+        <v-chip-group>
           <v-chip
             v-for="(product, index) in product.product_availability"
             :key="index"
@@ -157,7 +160,7 @@
   </v-row>
 
   <v-row justify="center">
-    <v-dialog v-model="deleteDialog" persistent max-width="500"  >
+    <v-dialog v-model="deleteDialog" persistent max-width="500">
       <v-card height="200" class="pa-5">
         <v-card-title class="text-h5">
           Delete This {{ product.product_title }}?
@@ -166,7 +169,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            style="color: green;"
+            style="color: green"
             color="  text-capitalize"
             text
             @click="deleteDialog = false"
@@ -174,7 +177,7 @@
             Cancel
           </v-btn>
           <v-btn
-            style="color: red;"
+            style="color: red"
             color="  text-capitalize"
             text
             @click="deleteItemProduct(product.id)"
@@ -186,15 +189,15 @@
     </v-dialog>
   </v-row>
 </template>
+
   <script>
 import { useUserStore } from "../../stores/user";
 import { productStore } from "../../stores/product";
 import { ref, computed, reactive } from "vue";
-
+import productImage from "@/assets/img/products/product.jpg";
 export default {
   data: () => ({
     loading: false,
-    
   }),
 
   methods: {
@@ -207,7 +210,7 @@ export default {
   setup() {
     const userStore = useUserStore();
     const productStr = productStore();
-
+    const productImages = ref(productImage);
     const data = reactive({
       states: [
         "12:00AM",
@@ -285,9 +288,9 @@ export default {
         validate();
       }
     };
+    const doubleCount = computed(()=> productStr.doubleCount)
     const products = computed(() => productStr.products);
     const filterActive = computed(() => productStr.filterActive);
-    const productImage = ref("");
     const titleRules = computed(() => [(v) => !!v || "Title is required"]);
     const nameRules = computed(() => [(v) => !!v || "Name is required"]);
     const availabilityRules = computed(() => [
@@ -343,8 +346,9 @@ export default {
       product_description,
       product_id,
       updateProdcut,
-      productImage,
+      productImages,
       form,
+      doubleCount,
       validate,
       ...data,
     };

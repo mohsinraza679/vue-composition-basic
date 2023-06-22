@@ -20,31 +20,58 @@
 
       <v-divider></v-divider>
       <v-list density="compact" nav>
-      
         <v-list-item
-          prepend-icon="mdi-view-dashboard"
-          title="Dashboard"
-          value="dashboard"
-          to="/dashboard"
+          v-for="(item, index) in items"
+          :key="index"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          :value="item.value"
+          :to="item.to"
           exact
         >
-        
-      </v-list-item>
-    
+        </v-list-item>
+      </v-list>
+
+      <template v-slot:append>
+        <div class="pa-2">
+          <v-btn block @click="logout">
+            <template v-if="rail === true"> <v-icon left>mdi-logout</v-icon> </template>
+            <template v-else>
+              <v-icon left>mdi-logout</v-icon> Logout
+            </template>
+          </v-btn>
+        </div>
+      </template>
+    </v-navigation-drawer>
+
+    <v-navigation-drawer
+      v-model="drawerMobile"
+      class="bg-deep-purple drawer-custom"
+      theme="dark"
+      absolute
+      temporary
+    >
+      <template v-slot:prepend>
         <v-list-item
-          prepend-icon="mdi-account"
-          title="My Account"
-          value="account"
-          to="/myaccount"
-          exact
+          lines="two"
+          prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
+          :title="user.username"
+          subtitle="Logged in"
         ></v-list-item>
+      </template>
+
+      <v-divider></v-divider>
+      <v-list density="compact" nav>
         <v-list-item
-          prepend-icon="mdi-account-group-outline"
-          title="Users"
-          value="users"
-          to="/users"
+          v-for="(item, index) in items"
+          :key="index"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          :value="item.value"
+          :to="item.to"
           exact
-        ></v-list-item>
+        >
+        </v-list-item>
       </v-list>
 
       <template v-slot:append>
@@ -64,7 +91,7 @@
         <v-app-bar-nav-icon @click="navBarToggle()"></v-app-bar-nav-icon>
       </template>
 
-      <v-app-bar-title>Welcome to {{}} Dashboard</v-app-bar-title>
+      <v-app-bar-title>Welcome to Dashboard</v-app-bar-title>
 
       <v-spacer></v-spacer>
 
@@ -100,22 +127,47 @@
   <script>
 import { useUserStore } from "../stores/user";
 import { productStore } from "../stores/product";
-import { ref, computed, watchEffect } from "vue";
+import { ref, computed, watchEffect, watch } from "vue";
 import router from "../router";
 import Product from "./product/index.vue";
+import useMediaQuery from "../useMediaQuery";
 export default {
   name: "Dashboard",
   components: { Product },
   setup() {
     const userStore = useUserStore();
     const productStr = productStore();
+    const windowSize = useMediaQuery();
+    console.log("useMediaQuery", windowSize);
+
     const items = ref([
-      { title: "Dashboard", icon: "mdi-view-dashboard" },
-      { title: "Account", icon: "mdi-account-box" },
-      { title: "Admin", icon: "mdi-gavel" },
+      {
+        title: "Dashboard",
+        icon: "mdi-view-dashboard",
+        to: "/dashboard",
+        value: "dashboard",
+      },
+      {
+        title: "My Account",
+        icon: "mdi-account-box",
+        to: "/myaccount",
+        value: "myaccount",
+      },
+      { title: "Users", icon: "mdi-gavel", to: "/users", value: "users" },
     ]);
     const drawer = ref(true);
+    const drawerMobile = ref(false);
     const rail = ref(false);
+    watch(
+      () => windowSize.width,
+      (newWidth) => {
+        if (newWidth > 768) {
+          drawer.value = true;
+        } else {
+          drawer.value = false;
+        }
+      }
+    );
 
     const newUser = ref("");
     const user = computed(() => userStore.user);
@@ -127,6 +179,11 @@ export default {
 
     watchEffect(() => {
       productStr.getProducts(userStore.user.id);
+      if (windowSize.width > 768) {
+        drawer.value = true;
+      } else {
+        drawer.value = false;
+      }
     });
     const addUser = () => {
       if (newUser.value) {
@@ -135,11 +192,16 @@ export default {
       }
     };
     const navBarToggle = () => {
-      rail.value = !rail.value;
+      if (windowSize.width > 768) {
+        drawer.value = true;
+        rail.value = !rail.value;
+      } else {
+        drawerMobile.value = !drawerMobile.value;
+      }
     };
-  const ActiveSearch = () => {
-    productStr.ActiveSearch()
-  }
+    const ActiveSearch = () => {
+      productStr.ActiveSearch();
+    };
     return {
       user: user,
       newUser,
@@ -147,11 +209,19 @@ export default {
       addUser,
       items,
       drawer,
+      drawerMobile,
       rail,
       navBarToggle,
       ActiveSearch,
+      windowSize,
     };
   },
 };
 </script>
+<style scoped>
+.drawer-custom{
+  height: 100vh !important;
+  overflow: auto;
+}
+</style>
   

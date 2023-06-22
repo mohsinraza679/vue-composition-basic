@@ -33,7 +33,7 @@
 
     <v-card-title>Availability</v-card-title>
 
-    <div class="px-4">
+    <div class="px-4 selection-main">
       <v-chip-group>
         <v-chip
             v-for="(product, index) in productdata.product_availability"
@@ -43,7 +43,7 @@
       </v-chip-group>
     </div>
 
-    <v-card-actions>
+    <!-- <v-card-actions> -->
       <div class="action-main">
         <div class="action-main-btn">
           <v-btn small color="primary" @click="editItem(productdata)">
@@ -56,7 +56,7 @@
           </v-btn>
         </div>
       </div>
-    </v-card-actions>
+    <!-- </v-card-actions> -->
   </v-card>
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent width="1024">
@@ -252,6 +252,14 @@ export default {
       console.log("data", product_availability.value);
       form.value.validate();
     };
+    const titleRules = computed(() => [(v) => !!v || "Title is required"]);
+    const nameRules = computed(() => [(v) => !!v || "Name is required"]);
+    const availabilityRules = computed(() => [
+      (v) => !!v || "Availability is required",
+    ]);
+    const descriptionRules = computed(() => [
+      (v) => !!v || "Description is required",
+    ]);
     return {
       productImages,
       productdata,
@@ -269,8 +277,30 @@ export default {
       form,
       deleteDialog,
       validate,
+      titleRules,
+      nameRules,
+      availabilityRules,
+      descriptionRules,
       ...data,
     };
   },
 };
 </script>
+<style scoped>
+.selection-main {
+  width: 95%;
+  max-height: 300px;
+  overflow: auto;
+}
+.action-main {
+  position: relative;
+}
+.action-main-btn {
+  position: absolute;
+  bottom: 15px;
+  right: 5px;
+}
+.action-main-btn button {
+  margin: 0px 3px;
+}
+</style>

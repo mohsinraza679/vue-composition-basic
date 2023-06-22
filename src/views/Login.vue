@@ -1,5 +1,5 @@
 <template>
-  <ErrorAlert v-if="errorMessageAlert == true" />
+  <ErrorAlert  />
   <div class="login-page">
     <div class="form">
       <v-form
@@ -7,6 +7,7 @@
         ref="form"
         v-model="valid"
         lazy-validation
+        @submit.prevent
       >
        
         <v-text-field

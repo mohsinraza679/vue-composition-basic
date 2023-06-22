@@ -27,7 +27,7 @@ export const useUserStore = defineStore('user', {
       const userEmail = userData.email;
       const foundUser = findUserByEmail(userEmail);
       if(foundUser){
-        this.errorMessage = 'You are already use this email'
+        this.errorMessage = 'This email is already taken.'
         this.errorMessageAlert = true
       }else{
         const id = users.length + 1;
@@ -50,8 +50,10 @@ export const useUserStore = defineStore('user', {
       const findUserByEmail = (email) => {
         return users.find((user) => user.email === email);
       };
+      
       const userEmail = email;
       const foundUser = findUserByEmail(userEmail);
+      
       if (foundUser) {
         if(foundUser.email == email && foundUser.password == password){
           localStorage.removeItem('user')

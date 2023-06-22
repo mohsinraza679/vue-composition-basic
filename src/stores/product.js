@@ -7,7 +7,13 @@ export const productStore = defineStore('product', {
     products:[],
     filterActive:true,
     productDetail:null,
+    count:2
+    ,
   }),
+  getters: {
+    // getProducts: (state) => state.products,
+    doubleCount: (state) => state.count * 2,
+  },
   actions: {
     ActiveSearch(){
       this.filterActive = !this.filterActive

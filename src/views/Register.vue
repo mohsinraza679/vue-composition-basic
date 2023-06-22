@@ -5,7 +5,9 @@
     <div class="form">
       <v-form class="register-form"  ref="form"
         v-model="valid"
-        lazy-validation >
+        lazy-validation
+        @submit.prevent
+         >
         <!-- <input v-model="username" type="text" placeholder="name" /> -->
         <v-text-field
           v-model="username"
@@ -18,6 +20,7 @@
           :rules="emailRules"
           label="email*"
           required
+          type="email"
         ></v-text-field>
       
         <v-text-field
@@ -25,6 +28,7 @@
           :rules="passwordRules"
           label="password*"
           required
+          type="password"
         ></v-text-field>
         <!-- <input v-model="password" type="password" placeholder="password" />
         <input v-model="email" type="text" placeholder="email address" /> -->
